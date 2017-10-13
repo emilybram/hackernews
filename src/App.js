@@ -42,6 +42,20 @@ const updateSearchTopstoriesState = (hits, page) => (prevState) => {
   };
 }
 
+const updateDismissState = (id) => (prevState) => {
+  const isNotId = item => item.objectID !== id;
+  const { searchKey, results } = prevState;
+  const { hits, page } = results[searchKey];
+  const updatedHits = hits.filter(isNotId);
+  
+  return {
+    results: { 
+      ...results, 
+      [searchKey]: { hits: updatedHits, page }
+    }
+  }
+}
+
 class App extends Component {
 
   constructor(props) {
@@ -102,18 +116,7 @@ class App extends Component {
   }
 
   onDismiss(id) {
-    const { searchKey, results } = this.state;
-    const { hits, page } = results[searchKey];
-
-    const isNotId = item => item.objectID !== id;
-    const updatedHits = hits.filter(isNotId);
-
-    this.setState({
-      results: { 
-        ...results, 
-        [searchKey]: { hits: updatedHits, page }
-      }
-    });
+    this.setState(updateDismissState(id));
   }
 
   render() {
